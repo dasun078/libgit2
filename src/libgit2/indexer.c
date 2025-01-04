@@ -319,9 +319,9 @@ static int advance_delta_offset(git_indexer *idx, git_object_t type)
 {
 	git_mwindow *w = NULL;
 
-	GIT_ASSERT_ARG(type == GIT_OBJECT_REF_DELTA || type == GIT_OBJECT_OFS_DELTA);
+	GIT_ASSERT_ARG(type == GIT_PACKFILE_REF_DELTA || type == GIT_PACKFILE_OFS_DELTA);
 
-	if (type == GIT_OBJECT_REF_DELTA) {
+	if (type == GIT_PACKFILE_REF_DELTA) {
 		idx->off += git_oid_size(idx->oid_type);
 	} else {
 		off64_t base_off;
@@ -813,7 +813,7 @@ static int read_stream_object(git_indexer *idx, git_indexer_progress *stats)
 		git_hash_init(&idx->hash_ctx);
 		git_str_clear(&idx->entry_data);
 
-		if (type == GIT_OBJECT_REF_DELTA || type == GIT_OBJECT_OFS_DELTA) {
+		if (type == GIT_PACKFILE_REF_DELTA || type == GIT_PACKFILE_OFS_DELTA) {
 			error = advance_delta_offset(idx, type);
 			if (error == GIT_EBUFS) {
 				idx->off = entry_start;
@@ -1094,7 +1094,7 @@ static int fix_thin_pack(git_indexer *idx, git_indexer_progress *stats)
 		if (error < 0)
 			return error;
 
-		if (type == GIT_OBJECT_REF_DELTA) {
+		if (type == GIT_PACKFILE_REF_DELTA) {
 			found_ref_delta = 1;
 			break;
 		}
@@ -1112,7 +1112,7 @@ static int fix_thin_pack(git_indexer *idx, git_indexer_progress *stats)
 		return -1;
 	}
 
-	git_oid__fromraw(&base, base_info, idx->oid_type);
+	git_oid_from_raw(&base, base_info, idx->oid_type);
 	git_mwindow_close(&w);
 
 	if (has_entry(idx, &base))

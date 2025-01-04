@@ -917,7 +917,7 @@ int git_reference__normalize_name(
 	bool allow_caret_prefix = true;
 	bool validate = (flags & GIT_REFERENCE_FORMAT__VALIDATION_DISABLE) == 0;
 
-#ifdef GIT_USE_ICONV
+#ifdef GIT_I18N_ICONV
 	git_fs_path_iconv_t ic = GIT_PATH_ICONV_INIT;
 #endif
 
@@ -932,7 +932,7 @@ int git_reference__normalize_name(
 	if (normalize)
 		git_str_clear(buf);
 
-#ifdef GIT_USE_ICONV
+#ifdef GIT_I18N_ICONV
 	if ((flags & GIT_REFERENCE_FORMAT__PRECOMPOSE_UNICODE) != 0) {
 		size_t namelen = strlen(current);
 		if ((error = git_fs_path_iconv_init_precompose(&ic)) < 0 ||
@@ -1032,7 +1032,7 @@ cleanup:
 	if (error && normalize)
 		git_str_dispose(buf);
 
-#ifdef GIT_USE_ICONV
+#ifdef GIT_I18N_ICONV
 	git_fs_path_iconv_clear(&ic);
 #endif
 
@@ -1076,9 +1076,13 @@ int git_reference_cmp(
 	const git_reference *ref2)
 {
 	git_reference_t type1, type2;
+	int ret;
 
 	GIT_ASSERT_ARG(ref1);
 	GIT_ASSERT_ARG(ref2);
+
+	if ((ret = strcmp(ref1->name, ref2->name)) != 0)
+		return ret;
 
 	type1 = git_reference_type(ref1);
 	type2 = git_reference_type(ref2);

@@ -859,7 +859,7 @@ static int ssh_certificate_check(git_cert *cert, int valid, const char *host, vo
 
 	cl_assert(_remote_ssh_fingerprint);
 
-	cl_git_pass(git_oid__fromstrp(&expected, _remote_ssh_fingerprint, GIT_OID_SHA1));
+	cl_git_pass(git_oid_from_prefix(&expected, _remote_ssh_fingerprint, strlen(_remote_ssh_fingerprint), GIT_OID_SHA1));
 	cl_assert_equal_i(GIT_CERT_HOSTKEY_LIBSSH2, cert->cert_type);
 	key = (git_cert_hostkey *) cert;
 
@@ -1373,7 +1373,7 @@ void test_online_clone__sha256(void)
 
 void test_online_clone__connect_timeout_configurable(void)
 {
-#ifdef GIT_WINHTTP
+#ifdef GIT_HTTPS_WINHTTP
 	cl_skip();
 #else
 	uint64_t start, finish;
@@ -1392,7 +1392,7 @@ void test_online_clone__connect_timeout_configurable(void)
 
 void test_online_clone__connect_timeout_default(void)
 {
-#ifdef GIT_WINHTTP
+#ifdef GIT_HTTPS_WINHTTP
 	cl_skip();
 #else
 	/* This test takes ~ 75 seconds on Unix. */
@@ -1410,7 +1410,7 @@ void test_online_clone__connect_timeout_default(void)
 
 void test_online_clone__timeout_configurable_times_out(void)
 {
-#ifdef GIT_WINHTTP
+#ifdef GIT_HTTPS_WINHTTP
 	cl_skip();
 #else
 	git_repository *failed_repo;
@@ -1427,7 +1427,7 @@ void test_online_clone__timeout_configurable_times_out(void)
 
 void test_online_clone__timeout_configurable_succeeds_slowly(void)
 {
-#ifdef GIT_WINHTTP
+#ifdef GIT_HTTPS_WINHTTP
 	cl_skip();
 #else
 	if (!_remote_speed_slow)
